@@ -1,5 +1,5 @@
 import json
-from command_gen import command_gen
+from command_gen import CommandGen
 
 class Parser:
   def __init__(self, file):
@@ -10,7 +10,7 @@ class Parser:
     with open(self.file, "r") as f:
       data = json.load(f)
 
-    script_builder = command_gen()
+    script_builder = CommandGen()
     for HighLevelkey, HighLevelvalue in data.items():
         match HighLevelkey:
           case "system_packages":
@@ -19,10 +19,12 @@ class Parser:
                       "system_packages": HighLevelvalue,
                       "type": "system"
             }
-            script_builder.generate(system_Data)
+            script_builder.setup(system_Data)
+            script_builder.generate()
           case "languages":
             ## for lang and version passing 
             for item in HighLevelvalue:
-              script_builder.generate(item)
+              script_builder.setup(item)
+              script_builder.generate()
           
     
