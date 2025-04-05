@@ -1,35 +1,35 @@
+class CommandGen:
+    INSTALL_COMMANDS = {
+      "python": "-m pip install",
+      "node": "npm install",
+      "ruby": "gem install",
+      "java": "mvn install"
+    }
 
-
-class command_gen:
-
-    def __init__(self, dep, system=False, lang=False, req=False):
-        if lang: 
-            self.name = dep.get("name")
-            self.version = dep.get("version")
-            self.system = False
-        elif system:
-            self.dep = dep
-            self.system = True
-        elif req:
-            self.req = True
-            self.dep = dep
-        
-        
-
+    def setup(self, dep):
+      self.dep = dep
+      self.type = self.dep["type"]
+      self.interp = None
 
     def generate(self):
-        with open("setup.sh", "w") as script:
-            script.write("#!/bin/bash\n")
-            script.write("echo 'Setting up your environment...'\n")
+      with open("setup.sh", "w") as script:
+        script.write("#!/bin/bash\n")
+        script.write("echo 'Setting up your environment...'\n")
 
-            ## probably a system package idk use apt get maybe 
-            if self.system:
-                for item in self.dep:
-                    script.write(f"apt-get install -y {item}")
-            elif self.lang:  
-                pass
-            elif self.req:
-                pass
+        script.write("sudo apt-get update")
 
+        if self.type == "system":
+          for item in self.dep:
+            script.write(f"sudo apt-get install -y {item}")
 
-            
+        elif self.type == "lang":
+          self.interp = f"{self.dep["name"]}{self.dep["version"]}"
+          script.write(f"sudo apt-get install -y {self.interp}")
+          packs = self.dep["packages"]
+          command = f"{self.interp} {CommandGen.INSTALL_COMMANDS[self.dep["name"]]}"
+
+          # requests==2.25.1 flask==2.0.1
+          for pack in packs:
+            command += f" {pack}"
+          script.write(command)
+
