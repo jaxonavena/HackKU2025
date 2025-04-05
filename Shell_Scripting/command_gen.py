@@ -1,36 +1,33 @@
 class CommandGen:
-    INSTALL_COMMANDS = {
-      "python": "-m pip install",
-      "node": "npm install",
-      "ruby": "gem install",
-      "java": "mvn install"
-    }
+  INSTALL_COMMANDS = {
+    "python": "-m pip install",
+    "node": "npm install",
+    "ruby": "gem install",
+    "java": "mvn install"
+  }
 
-    def setup(self, dep):
-      self.dep = dep
-      self.interp = None
+  def setup(self):
+    with open("setup.sh", "w") as script:
+      script.write("#!/bin/bash\n")
+      script.write("echo 'Setting up your environment...'\n")
+      script.write("sudo apt-get update\n")
 
-    def generate(self):
-      with open("setup.sh", "w") as script:
-        script.write("#!/bin/bash\n")
-        script.write("echo 'Setting up your environment...'\n")
+  def generate(self, dep):
+    with open("setup.sh", "a") as script:
+      if dep.get("system_packages"):
+        for item in dep:
+          script.write(f"sudo apt-get install -y {item}\n")
 
-        script.write("sudo apt-get update")
+      elif dep.get("name") and dep.get("version"):
+        interp = f"{dep.get("name")}{dep.get("version")}"
+        script.write(f"sudo apt-get install -y {interp}\n")
 
-        if self.dep.get("system_packages"):
-          for item in self.dep:
-            script.write(f"sudo apt-get install -y {item}\n")
+        packs = dep.get("packages")
+        command = f"{interp} {CommandGen.INSTALL_COMMANDS[dep.get("name")]}"
 
-        elif self.dep["name"] and self.dep["version"]:
-          self.interp = f"{self.dep["name"]}{self.dep["version"]}"
-          script.write(f"sudo apt-get install -y {self.interp}\n")
-          packs = self.dep["packages"]
-          command = f"{self.interp} {CommandGen.INSTALL_COMMANDS[self.dep["name"]]}"
-
-          # requests==2.25.1 flask==2.0.1
-          for pack in packs:
-            command += f" {pack}"
-
-          command += "\n"
-          script.write(command)
+        for pack in packs:
+          command += f" {pack}"
+        command += "\n"
+        print(command)
+        script.write(command)
 
