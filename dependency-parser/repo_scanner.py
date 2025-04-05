@@ -1,12 +1,15 @@
 # multi_lang_dep_parser.py
 
 import os
-import subprocess
 import json
 import sys
 import logging
 import shutil
 from git import Repo
+from parsers.python_parser import extract_dependencies as extract_python_deps
+from parsers.cpp_parser import extract_dependencies as extract_cpp_deps
+from parsers.rust_parser import extract_dependencies as extract_rust_deps
+from parsers.go_parser import extract_dependencies as extract_go_deps
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,20 +19,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Define paths relative to the script's directory
 REPO_PATH = os.path.join(SCRIPT_DIR, "repo")
-
-def check_pipreqs_installed():
-    """Check if pipreqs is installed, install it if not."""
-    try:
-        subprocess.run(["pipreqs", "--version"], check=True, capture_output=True)
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        logging.info("pipreqs not found. Installing...")
-        try:
-            subprocess.run([sys.executable, "-m", "pip", "install", "--break-system-packages", "pipreqs"], check=True)
-            return True
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Failed to install pipreqs: {e}")
-            return False
 
 def clone_repo(git_url):
     """Clone a GitHub repository to the specified directory."""
@@ -60,45 +49,6 @@ def detect_languages(path):
     logging.info(f"Detected languages: {list(langs)}")
     return list(langs)
 
-def extract_python_dependencies(repo_path):
-    """Extract Python dependencies using pipreqs from the target repository."""
-    if not check_pipreqs_installed():
-        logging.error("Cannot extract Python dependencies without pipreqs")
-        return []
-
-    try:
-        logging.info(f"Extracting Python dependencies from {repo_path}...")
-        # Run pipreqs directly instead of through python -m
-        result = subprocess.run(
-            ["pipreqs", repo_path, "--force"],
-            capture_output=True,
-            text=True
-        )
-        
-        # Log any output from pipreqs
-        if result.stdout:
-            logging.info(f"pipreqs output: {result.stdout}")
-        if result.stderr:
-            logging.error(f"pipreqs error: {result.stderr}")
-            
-        # Check if the command failed
-        if result.returncode != 0:
-            logging.error(f"pipreqs failed with return code {result.returncode}")
-            return []
-        
-        requirements_path = os.path.join(repo_path, "requirements.txt")
-        if os.path.exists(requirements_path):
-            with open(requirements_path) as f:
-                deps = [line.strip() for line in f if line.strip()]
-                logging.info(f"Found {len(deps)} Python dependencies")
-                return deps
-        else:
-            logging.error(f"requirements.txt not found at {requirements_path}")
-            return []
-    except Exception as e:
-        logging.error(f"Error extracting Python dependencies: {e}")
-        return []
-
 def build_dependency_manifest(language_data):
     """Build a unified JSON dependency manifest."""
     manifest = {
@@ -114,17 +64,44 @@ def main(github_repo_url):
         # Clone repository to specific path
         repo_path = clone_repo(github_repo_url)
         
-        # Extract dependencies from the cloned repository
-        deps = extract_python_dependencies(repo_path)
+        # Detect languages in the repository
+        languages = detect_languages(repo_path)
         
-        language_data = [{
-            "name": "python",
-            "version": "3.9",
-            "packages": deps
-        }]
+        # Extract dependencies for each detected language
+        language_data = []
+        
+        if "python" in languages:
+            python_deps = extract_python_deps(repo_path)
+            if python_deps["packages"]:
+                language_data.append(python_deps)
+                
+        if "cpp" in languages:
+            cpp_deps = extract_cpp_deps(repo_path)
+            if cpp_deps["packages"]:
+                language_data.append(cpp_deps)
+                
+        if "rust" in languages:
+            rust_deps = extract_rust_deps(repo_path)
+            if rust_deps["packages"]:
+                language_data.append(rust_deps)
+                
+        if "go" in languages:
+            go_deps = extract_go_deps(repo_path)
+            if go_deps["packages"]:
+                language_data.append(go_deps)
 
         manifest = build_dependency_manifest(language_data)
-        print(json.dumps(manifest, indent=2))
+        
+        # Get repository name from URL
+        repo_name = github_repo_url.split('/')[-1].replace('.git', '')
+        
+        # Create manifest filename with repository name
+        manifest_file = os.path.join(SCRIPT_DIR, f"dependencies_{repo_name}.json")
+        
+        # Write manifest to JSON file
+        with open(manifest_file, 'w') as f:
+            json.dump(manifest, f, indent=2)
+        logging.info(f"Dependency manifest written to {manifest_file}")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         sys.exit(1)
