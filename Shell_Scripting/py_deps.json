@@ -1,0 +1,20 @@
+{
+  "base_image": "macos:12",
+  "system_packages": [
+    "brew",
+    "git",
+    "wget"
+  ],
+  "languages": [
+    {
+      "name": "python",
+      "version": "3.9",
+      "packages": [
+        "requests==2.27.1",
+        "flask==2.1.2",
+        "pandas>=1.3.0",
+        "numpy~=1.21.0"
+      ]
+    }
+  ]
+}
