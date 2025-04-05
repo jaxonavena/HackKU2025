@@ -1,0 +1,25 @@
+{
+  "base_image": "ubuntu:22.04",
+  "system_packages": [
+    "build-essential",
+    "curl"
+  ],
+  "languages": [
+    {
+      "name": "python",
+      "version": "3.9",
+      "packages": [
+        "requests==2.25.1",
+        "flask==2.0.1"
+      ]
+    },
+    {
+      "name": "node",
+      "version": "16.x",
+      "packages": [
+        "express",
+        "axios"
+      ]
+    }
+  ]
+}
