@@ -1,14 +1,15 @@
 import json
 
 class Parser:
-  def __init__(self, payload):
-    data = []
+  def __init__(self, file):
+    self.file = file
+    self.data = []
 
   def parse(self):
-    with open('fixtures/deps.json') as f:
+    with open(self.file, "r") as f:
       data = json.load(f)
 
-    dependencies = data["dependencies"]
-
-    for dep in dependencies:
-      print(dep)
+    command = data["test"]
+    print(command)
+    # for dep in dependencies:
+    #   print(dep)
