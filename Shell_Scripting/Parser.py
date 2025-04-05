@@ -5,7 +5,7 @@ class Parser:
     data = []
 
   def parse(self):
-    with open('dependencies.json') as f:
+    with open('fixtures/deps.json') as f:
       data = json.load(f)
 
     dependencies = data["dependencies"]
