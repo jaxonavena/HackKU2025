@@ -3,7 +3,11 @@ class CommandGen:
     "python": "-m pip install",
     "node": "npm install",
     "ruby": "gem install",
-    "java": "mvn install"
+    "java": "mvn install",
+    "c": "sudo apt-get install",
+    "cpp": "sudo apt-get install",
+    "rust": "cargo install",
+    "go": "go get"
   }
 
   def setup(self):
@@ -13,21 +17,24 @@ class CommandGen:
       script.write("sudo apt-get update\n")
 
   def generate(self, dep):
-    system_package = dep.get("system_packages")
+    system_packages = dep.get("system_packages")
     name = dep.get("name")
     version = dep.get("version")
+    packs = dep.get("packages")
 
     with open("setup.sh", "a") as script:
-      if system_package:
-        for item in dep:
+      if system_packages:
+        for item in system_packages:
           script.write(f"sudo apt-get install -y {item}\n")
 
       elif name and version:
-        interp = f"{dep.get("name")}{dep.get("version")} " if name == "python" else ""
-        script.write(f"sudo apt-get install -y {interp}\n")
-
-        packs = dep.get("packages")
-        command = f"{interp}{CommandGen.INSTALL_COMMANDS[dep.get("name")]}"
+        if name == "python":
+          interp = f"{name}{version} "
+          script.write(f"sudo apt-get install -y {interp}\n")
+          command = f"{interp}{CommandGen.INSTALL_COMMANDS[name]}"
+        else:
+          script.write(f"sudo apt-get install -y {name}\n")
+          command = CommandGen.INSTALL_COMMANDS[name]
 
         for pack in packs:
           command += f" {pack}"
