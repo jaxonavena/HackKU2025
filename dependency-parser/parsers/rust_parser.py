@@ -1,42 +1,31 @@
-import os
+# rust_parser.py
+
+import subprocess
+import json
 import logging
-import toml
+
 
 def extract_dependencies(repo_path):
-    """Extract Rust dependencies from the target repository."""
+    """Extract Rust dependencies using cargo metadata."""
     try:
         logging.info(f"Extracting Rust dependencies from {repo_path}...")
-        
-        # Look for Cargo.toml
-        cargo_path = os.path.join(repo_path, "Cargo.toml")
-        if not os.path.exists(cargo_path):
-            return {
-                "name": "rust",
-                "version": "latest",
-                "packages": []
-            }
-            
-        # Parse Cargo.toml
-        with open(cargo_path) as f:
-            cargo_data = toml.load(f)
-            
-        dependencies = []
-        if "dependencies" in cargo_data:
-            for dep, version in cargo_data["dependencies"].items():
-                if isinstance(version, str):
-                    dependencies.append(f"{dep}=={version}")
-                else:
-                    dependencies.append(dep)
-                    
+        output = subprocess.check_output(
+            ["cargo", "metadata", "--format-version=1", "--no-deps"],
+            cwd=repo_path
+        )
+        metadata = json.loads(output)
+        package = metadata["packages"][0]
+        deps = [f"{dep['name']} {dep['req']}" for dep in package["dependencies"]]
+        logging.info(f"Found {len(deps)} Rust dependencies")
         return {
             "name": "rust",
-            "version": "latest",
-            "packages": dependencies
+            "version": "1.72",
+            "packages": deps
         }
     except Exception as e:
         logging.error(f"Error extracting Rust dependencies: {e}")
         return {
             "name": "rust",
-            "version": "latest",
+            "version": "1.72",
             "packages": []
-        } 
+        }

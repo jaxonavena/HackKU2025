@@ -1,0 +1,40 @@
+{
+  "base_image": "ubuntu:22.04",
+  "system_packages": [
+    "build-essential",
+    "curl"
+  ],
+  "languages": [
+    {
+      "name": "rust",
+      "version": "1.72",
+      "packages": [
+        "aho-corasick ^1.1",
+        "anyhow ^1.0",
+        "argmax ^0.3.1",
+        "clap ^4.5.35",
+        "clap_complete ^4.5.47",
+        "crossbeam-channel ^0.5.14",
+        "ctrlc ^3.2",
+        "etcetera ^0.9",
+        "faccess ^0.2.4",
+        "globset ^0.4",
+        "ignore ^0.4.23",
+        "jiff ^0.2.5",
+        "lscolors ^0.20",
+        "normpath ^1.1.1",
+        "nu-ansi-term ^0.50",
+        "regex ^1.11.1",
+        "regex-syntax ^0.8",
+        "diff ^0.1",
+        "filetime ^0.2",
+        "tempfile ^3.19",
+        "test-case ^3.3",
+        "version_check ^0.9",
+        "jemallocator ^0.5.4",
+        "libc ^0.2",
+        "nix ^0.29.0"
+      ]
+    }
+  ]
+}
