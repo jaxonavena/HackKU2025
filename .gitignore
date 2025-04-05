@@ -1,0 +1,16 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Repo directory for cloning
+dependency-parser/repo/
+
+# Operating system files
+.DS_Store 
