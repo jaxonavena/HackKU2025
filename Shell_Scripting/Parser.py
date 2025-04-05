@@ -10,46 +10,19 @@ class Parser:
     with open(self.file, "r") as f:
       data = json.load(f)
 
-
+    script_builder = command_gen()
     for HighLevelkey, HighLevelvalue in data.items():
-        print(f"\n=== {HighLevelkey.upper()} ===")
         match HighLevelkey:
           case "system_packages":
-                        ## system packages 
-
-            # print(f"- {item}")
-            command_gen.generate(HighLevelvalue, system=True)
-
+            ## system packages 
+            system_Data = {
+                      "system_packages": HighLevelvalue,
+                      "type": "system"
+            }
+            script_builder.generate(system_Data)
           case "languages":
-
-            ## if the entry is a list, meaning only have 
-            if isinstance(HighLevelvalue, list):
-                for item in HighLevelvalue:
-                    if isinstance(item, dict):
-                        for sub_key, sub_value in item.items():
-                            print(f"{sub_key}: {sub_value}")
-                            if sub_key == "packages":
-                              
-                              
-                            command_gen.generate(HighLevelvalue.items())
-                    else:
-                      ## system packages 
-                      if HighLevelkey == "system_packages":
-                        print(f"- {item}")
-                        command_gen.generate(item, system=True)
-            case
-
-
-        # elif isinstance(HighLevelvalue, dict):
-        #     for sub_key, sub_value in HighLevelvalue.items():
-        #         print(f"{sub_key}: {sub_value}")
-        #         ## create the command 
-        #         command_gen(HighLevelvalue.items())
-
-
-        else:
-            print(f"{value}")
-            
-    command = data["test"]
-    print(command)
+            ## for lang and version passing 
+            for item in HighLevelvalue:
+              script_builder.generate(item)
+          
     
