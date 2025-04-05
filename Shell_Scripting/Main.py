@@ -1,4 +1,4 @@
-import json 
+import json
 import Parser from Parser
 
 ## Add code for receiveing json file and replace this hard coded input
@@ -12,11 +12,8 @@ with open("setup.sh", "w") as script:
     script.write("#!/bin/bash\n")
     script.write("echo 'Setting up your environment...'\n")
 
-    
-    ## pip
-    match data:
-        case d
 
-    ## npm 
-butts
+    ## pip
+
+    ## npm
 
