@@ -6,6 +6,12 @@ import sys
 import logging
 import shutil
 from git import Repo
+
+# Add the current directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
+# Import parsers using relative paths
 from parsers.python_parser import extract_dependencies as extract_python_deps
 from parsers.cpp_parser import extract_dependencies as extract_cpp_deps
 from parsers.rust_parser import extract_dependencies as extract_rust_deps
@@ -98,13 +104,17 @@ def main(github_repo_url):
         # Create manifest filename with repository name
         manifest_file = os.path.join(SCRIPT_DIR, f"dependencies_{repo_name}.json")
         
-        # Write manifest to JSON file
+        # Write manifest to JSON file (optional, for debugging)
         with open(manifest_file, 'w') as f:
             json.dump(manifest, f, indent=2)
         logging.info(f"Dependency manifest written to {manifest_file}")
+        
+        # Return the manifest
+        return manifest
+        
     except Exception as e:
         logging.error(f"An error occurred: {e}")
-        sys.exit(1)
+        raise  # Re-raise the exception to be handled by the caller
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
