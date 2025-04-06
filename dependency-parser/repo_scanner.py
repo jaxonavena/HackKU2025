@@ -8,6 +8,12 @@ import shutil
 from git import Repo
 import tempfile
 
+# Get the path to the parent directory (your_project/)
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+
+from Shell_Scripting.Main import script_gen
+
 # Add the current directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
@@ -39,7 +45,7 @@ def clone_repo(git_url):
         except Exception as e:
             logging.error(f"Git clone failed: {e}")
             raise Exception(f"Git clone failed: {e}")
-            
+
         return repo_path
     except Exception as e:
         # Clean up the temporary directory if something goes wrong
@@ -91,60 +97,60 @@ def main(github_repo_url):
     """
     if not github_repo_url:
         raise Exception("GitHub repository URL is required")
-        
+
     if not (github_repo_url.startswith('http://') or github_repo_url.startswith('https://')):
         raise Exception("Invalid GitHub URL format. URL must start with http:// or https://")
-    
+
     repo_path = None
     try:
         # Create repo directory if it doesn't exist
         os.makedirs(os.path.join(SCRIPT_DIR, "repo"), exist_ok=True)
-        
+
         # Clone repository to specific path
         repo_path = clone_repo(github_repo_url)
-        
+
         # Detect languages in the repository
         languages = detect_languages(repo_path)
-        
+
         # Extract dependencies for each detected language
         language_data = []
-        
+
         if "python" in languages:
             python_deps = extract_python_deps(repo_path)
             if python_deps["packages"]:
                 language_data.append(python_deps)
-                
+
         if "cpp" in languages:
             cpp_deps = extract_cpp_deps(repo_path)
             if cpp_deps["packages"]:
                 language_data.append(cpp_deps)
-                
+
         if "rust" in languages:
             rust_deps = extract_rust_deps(repo_path)
             if rust_deps["packages"]:
                 language_data.append(rust_deps)
-                
+
         if "go" in languages:
             go_deps = extract_go_deps(repo_path)
             if go_deps["packages"]:
                 language_data.append(go_deps)
 
         manifest = build_dependency_manifest(language_data)
-        
+
         # Get repository name from URL
         repo_name = github_repo_url.split('/')[-1].replace('.git', '')
-        
+
         # Create manifest filename with repository name
-        manifest_file = os.path.join(SCRIPT_DIR, f"dependencies_{repo_name}.json")
-        
+        manifest_file = "target.json"
+
         # Write manifest to JSON file (optional, for debugging)
         with open(manifest_file, 'w') as f:
             json.dump(manifest, f, indent=2)
         logging.info(f"Dependency manifest written to {manifest_file}")
-        
+
         # Return the manifest
         return manifest
-        
+
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise  # Re-raise the exception to be handled by the caller
@@ -158,3 +164,4 @@ if __name__ == "__main__":
         print("Usage: python repo_scanner.py <github_repo_url>")
         sys.exit(1)
     main(sys.argv[1])
+    script_gen()

@@ -10,8 +10,7 @@ from Parser import Parser
 
 ## Add code for receiveing json file and replace this hard coded input
 def script_gen():
-    file = "../examples/big-deps.json"
-
+    file = "../dependency-parser/target.json"
     jimbo = Parser(file)
     jimbo.parse()
 
