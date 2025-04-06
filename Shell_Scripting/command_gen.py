@@ -10,6 +10,17 @@ class CommandGen:
     "go": "go get"
   }
 
+  FULLNAMES = {
+    "python": "python",
+    "node": "nodejs npm",
+    "ruby": "ruby",
+    "java": "java",
+    "c": "gcc g++",
+    "cpp": "gcc g++",
+    "rust": "rust",
+    "go": "golang"
+  }
+
   def setup(self):
     with open("setup.sh", "w") as script:
       script.write("#!/bin/bash\n")
@@ -33,7 +44,7 @@ class CommandGen:
           script.write(f"sudo apt-get install -y {interp}\n")
           command = f"{interp}{CommandGen.INSTALL_COMMANDS[name]}"
         else:
-          script.write(f"sudo apt-get install -y {name}\n")
+          script.write(f"sudo apt-get install -y {CommandGen.FULLNAMES[name]}\n")
           command = CommandGen.INSTALL_COMMANDS[name]
 
         for pack in packs:
