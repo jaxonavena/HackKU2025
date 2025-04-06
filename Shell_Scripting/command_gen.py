@@ -25,7 +25,7 @@ class CommandGen:
     with open("setup.sh", "w") as script:
       script.write("#!/bin/bash\n")
       script.write("echo 'Setting up your environment...'\n")
-      script.write("sudo apt-get update\n")
+      script.write("apt-get update\n")
       script.write("apt-get install -y cmake g++ pkg-config libjson-c-dev libwebsockets-dev git make\n")
       script.write("git clone https://github.com/tsl0922/ttyd.git /tmp/ttyd\n")
       script.write("cd /tmp/ttyd\n")
@@ -42,15 +42,15 @@ class CommandGen:
     with open("setup.sh", "a") as script:
       if system_packages:
         for item in system_packages:
-          script.write(f"sudo apt-get install -y {item}\n")
+          script.write(f"apt-get install -y {item}\n")
 
       elif name and version:
         if name == "python":
           interp = f"{name}{version} "
-          script.write(f"sudo apt-get install -y {interp}\n")
+          script.write(f"apt-get install -y {interp}\n")
           command = f"{interp}{CommandGen.INSTALL_COMMANDS[name]}"
         else:
-          script.write(f"sudo apt-get install -y {CommandGen.FULLNAMES[name]}\n")
+          script.write(f"apt-get install -y {CommandGen.FULLNAMES[name]}\n")
           command = CommandGen.INSTALL_COMMANDS[name]
 
         for pack in packs:
