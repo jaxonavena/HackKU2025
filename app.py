@@ -25,7 +25,6 @@ loader = importlib.machinery.SourceFileLoader(
 spec = importlib.util.spec_from_loader('repo_scanner', loader)
 repo_scanner = importlib.util.module_from_spec(spec)
 loader.exec_module(repo_scanner)
-scan_repo = repo_scanner.main
 
 app = Flask(__name__)
 CORS(app)
@@ -51,8 +50,8 @@ def run():
 
     try:
         # Run repo scanner to get dependencies JSON
-        scan_repo(repo_url)
-        script_gen()
+        repo_scanner.main(repo_url)
+        # script_gen()
         return jsonify({"status": "success"})
 
     except Exception as e:

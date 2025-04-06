@@ -28,7 +28,7 @@ from parsers.go_parser import extract_dependencies as extract_go_deps
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Get the absolute path of the script's directory
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) # dependency-parser
 
 def get_repo_path():
     """Get a unique temporary directory for cloning repositories"""
@@ -103,6 +103,10 @@ def main(github_repo_url):
 
     repo_path = None
     try:
+        # Clean up the temporary repository
+        if repo_path:
+            cleanup_repo(repo_path)
+
         # Create repo directory if it doesn't exist
         os.makedirs(os.path.join(SCRIPT_DIR, "repo"), exist_ok=True)
 
@@ -155,10 +159,7 @@ def main(github_repo_url):
         logging.error(f"An error occurred: {e}")
         raise  # Re-raise the exception to be handled by the caller
     finally:
-        # Clean up the temporary repository
-        if repo_path:
-            cleanup_repo(repo_path)
-
+        script_gen()
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
