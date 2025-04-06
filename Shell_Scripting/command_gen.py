@@ -24,14 +24,18 @@ class CommandGen:
   def setup(self):
     with open("setup.sh", "w") as script:
       script.write("#!/bin/bash\n")
+      script.write("set -e  # Exit immediately on error")
       script.write("echo 'Setting up your environment...'\n")
       script.write("apt-get update\n")
-      script.write("apt-get install -y cmake g++ pkg-config libjson-c-dev libwebsockets-dev git make\n")
-      script.write("git clone https://github.com/tsl0922/ttyd.git /tmp/ttyd\n")
-      script.write("cd /tmp/ttyd\n")
-      script.write("mkdir build && cd build\n")
-      script.write("cmake ..\n")
-      script.write("make && make install\n")
+
+  def script_end(self):
+      with open("setup.sh", "a") as script:
+        script.write("apt-get install -y cmake g++ pkg-config libjson-c-dev libwebsockets-dev git make\n")
+        script.write("git clone https://github.com/tsl0922/ttyd.git /tmp/ttyd\n")
+        script.write("cd /tmp/ttyd\n")
+        script.write("mkdir build && cd build\n")
+        script.write("cmake ..\n")
+        script.write("make && make install\n")
 
   def generate(self, dep):
     system_packages = dep.get("system_packages")
