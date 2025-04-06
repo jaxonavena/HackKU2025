@@ -11,9 +11,6 @@ def run():
     repo_url = data.get('repo_url', '')
     print(f"Received repo URL: {repo_url}")
     
-    # 1) Clone the repo
-    # 2) Build Docker image
-    # 3) etc.
     script_gen()
     pathToScript = "Shell_Scripting/setup.sh"
 
