@@ -30,4 +30,7 @@ dist/
 build/
 
 # Operating system files
-.DS_Store 
+.DS_Store
+
+setup.sh
+json/target.json
