@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from Shell_Scripting.Main import script_gen 
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +14,8 @@ def run():
     # 1) Clone the repo
     # 2) Build Docker image
     # 3) etc.
+    script_gen()
+    pathToScript = "Shell_Scripting/setup.sh"
 
     return jsonify({"message": "Repo URL received", "repo_url": repo_url})
 
