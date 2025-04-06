@@ -23,6 +23,8 @@ class Parser:
             elif HighLevelkey == "languages":
                     for item in HighLevelvalue:
                         script_builder.generate(item)
+                        
+        script_builder.script_end()
 
 
 
