@@ -3,23 +3,14 @@ from flask_cors import CORS
 import sys
 import os
 import traceback
-
-from DockerBuilder.imageBuilder import generate_dockerfile, build_docker_image
-from DockerBuilder.deploymentManger import push_image_to_acr, deploy_to_azure_from_acr
 import uuid
 import time
-# Import using importlib to handle the hyphenated directory name
 import importlib.util
 import importlib.machinery
 
-# Get the path to the parent directory (your_project/)
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
-
+from DockerBuilder.imageBuilder import generate_dockerfile, build_docker_image
+from DockerBuilder.deploymentManger import push_image_to_acr, deploy_to_azure_from_acr
 from Shell_Scripting.Main import script_gen
-
-# # Add the current directory to Python path
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Load the repo_scanner module
 loader = importlib.machinery.SourceFileLoader(
@@ -30,8 +21,9 @@ spec = importlib.util.spec_from_loader('repo_scanner', loader)
 repo_scanner = importlib.util.module_from_spec(spec)
 loader.exec_module(repo_scanner)
 
+# Flask app setup
 app = Flask(__name__)
-CORS(app)  # This must also come after app is defined
+CORS(app)
 
 @app.route('/')
 def home():
@@ -39,36 +31,32 @@ def home():
 
 @app.route('/run', methods=['POST'])
 def run():
-    data = request.get_json()
+    data = request.get_json(force=True)
     repo_url = data.get('repo_url', '')
-    print(f"Received repo URL: {repo_url}")
+    print(f"📦 Received repo URL: {repo_url}")
 
     try:
-        # Run repo scanner to get dependencies JSON
+        # === STEP 1: Analyze and generate install_deps.sh
         repo_scanner.main(repo_url)
-        # script_gen()
-        return jsonify({"status": "success"})
-        # 1. Analyze and generate install_deps.sh
-        scan_repo(repo_url)
         script_gen()
 
-        # 2. Generate Dockerfile
-        path = os.path.dirname(os.path.abspath(__file__)) + "/DockerBuilder"
+        # === STEP 2: Generate Dockerfile
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DockerBuilder")
         generate_dockerfile(path)
 
-        # 3. Build Docker image
+        # === STEP 3: Build Docker image
         unique_id = uuid.uuid4().hex[:6]
         image_tag = f"cli-runner:{unique_id}"
         image = build_docker_image(path, image_tag)
 
-        # 4. Push to ACR
+        # === STEP 4: Push to ACR
         acr_server = "clirunnerregistry.azurecr.io"
         acr_username = "clirunnerregistry"
-        acr_password = "1zzlku2RHy5s3X1Do82HYThS7MM6DMgeLMke33qopk+ACRANFJhc"  # Replace or use env variable
+        acr_password = "1zzlku2RHy5s3X1Do82HYThS7MM6DMgeLMke33qopk+ACRANFJhc"  # Consider using os.environ for secrets
 
         full_image_tag = push_image_to_acr(image, acr_server, "cli-runner")
 
-        # 5. Deploy to Azure
+        # === STEP 5: Deploy to Azure
         container_name = f"cli-runner-deploy-{unique_id}"
         dns_label = f"clirunnerdemo{unique_id}"
         deploy_to_azure_from_acr(
@@ -82,27 +70,27 @@ def run():
             port=8080
         )
 
-        # 6. Wait for Azure to assign the public IP (or add a polling function)
+        # === STEP 6: Wait a few seconds and return the public IP
         public_ip = f"http://{dns_label}.eastus.azurecontainer.io:8080"
-        time.sleep(10)  # Allow a bit of time for provisioning
+        time.sleep(10)
 
-        # 7. Read the shell script
+        # === STEP 7: Return the generated shell script and terminal URL
         with open(os.path.join(path, "install_deps.sh")) as f:
             shell_script = f.read()
 
         return jsonify({
             "status": "success",
             "shell_script": shell_script,
-            "dependencies": {},  # Optional: return parsed deps here
+            "dependencies": {},  # Add dependency JSON here if needed
             "ttyd_url": public_ip
         })
 
     except Exception as e:
-        print(traceback.format_exc())
+        print("❌ ERROR during deploy:", traceback.format_exc())
         return jsonify({
             "status": "error",
             "message": str(e)
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
