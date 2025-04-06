@@ -8,6 +8,12 @@ sys.path.append(current_dir)
 
 from Parser import Parser
 
+## Add code for receiveing json file and replace this hard coded input
+def script_gen():
+    file = "../examples/big-deps.json"
+
+    jimbo = Parser(file)
+
 def main(json_data=None):
     """
     Process dependencies and generate shell script.

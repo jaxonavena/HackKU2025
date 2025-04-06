@@ -22,6 +22,8 @@ loader.exec_module(repo_scanner)
 scan_repo = repo_scanner.main
 
 from Shell_Scripting.Main import main as generate_shell_script
+from Shell_Scripting.Main import script_gen 
+
 
 app = Flask(__name__)
 CORS(app)
@@ -64,6 +66,10 @@ def run():
             "status": "error",
             "message": str(e)
         }), 500
+#     script_gen()
+#     pathToScript = "Shell_Scripting/setup.sh"
+
+#     return jsonify({"message": "Repo URL received", "repo_url": repo_url})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, extra_files=extra_files)
