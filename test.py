@@ -1,5 +1,5 @@
-from imageBuilder import generate_dockerfile, build_docker_image
-from deploymentManger import push_image_to_acr, deploy_to_azure_from_acr
+from HackKU2025.imageBuilder import generate_dockerfile, build_docker_image
+from HackKU2025.deploymentManger import push_image_to_acr, deploy_to_azure_from_acr
 import uuid
 import os
 def test_generate_dockerfile():

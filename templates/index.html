@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div
+        <!-- <div
           id="terminalSection"
           class="hidden bg-white rounded-lg shadow-lg p-6 mt-8"
         >
@@ -76,7 +76,7 @@
             id="terminalFrame"
             class="w-full h-[500px] border rounded-md"
           ></iframe>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -107,19 +107,19 @@
 
             if (data.status === "success") {
               document.getElementById("dependenciesJson").textContent =
-                JSON.stringify(data.dependencies || {}, null, 2);
+                JSON.stringify(data.dependencies, null, 2);
               document.getElementById("shellScript").textContent =
                 data.shell_script;
               results.classList.remove("hidden");
 
               // Show terminal iframe
-              if (data.ttyd_url) {
-                const terminalSection =
-                  document.getElementById("terminalSection");
-                const terminalFrame = document.getElementById("terminalFrame");
-                terminalFrame.src = data.ttyd_url;
-                terminalSection.classList.remove("hidden");
-              }
+              // if (data.ttyd_url) {
+              //   const terminalSection =
+              //     document.getElementById("terminalSection");
+              //   const terminalFrame = document.getElementById("terminalFrame");
+              //   terminalFrame.src = data.ttyd_url;
+              //   terminalSection.classList.remove("hidden");
+              // }
 
               // Show results
               results.classList.remove("hidden");
