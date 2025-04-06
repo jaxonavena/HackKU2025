@@ -1,9 +1,15 @@
 #!/bin/bash
 echo 'Setting up your environment...'
 sudo apt-get update
+apt-get install -y cmake g++ pkg-config libjson-c-dev libwebsockets-dev git make
+git clone https://github.com/tsl0922/ttyd.git /tmp/ttyd
+cd /tmp/ttyd
+mkdir build && cd build
+cmake ..
+make && make install
 sudo apt-get install -y build-essential
 sudo apt-get install -y curl
-sudo apt-get install -y python3.9
+sudo apt-get install -y python3.9 
 python3.9 -m pip install requests==2.25.1 flask==2.0.1 numpy==1.21.0 pandas==1.3.0
 sudo apt-get install -y nodejs npm
 npm install express axios lodash react
