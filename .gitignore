@@ -32,5 +32,5 @@ build/
 # Operating system files
 .DS_Store
 
-setup.sh
-json/target.json
+# setup.sh
+# json/target.json
