@@ -69,40 +69,40 @@ def run():
         image_tag = f"cli-runner-test:{unique_id}"
         image = build_docker_image(path, image_tag)
         print("Finished")
-        # # === STEP 4: Push to ACR
-        # acr_server = "clirunnerregistry.azurecr.io"
-        # acr_username = "clirunnerregistry"
-        # acr_password = "1zzlku2RHy5s3X1Do82HYThS7MM6DMgeLMke33qopk+ACRANFJhc"  # Consider using os.environ for secrets
+        # === STEP 4: Push to ACR
+        acr_server = "clirunnerregistry.azurecr.io"
+        acr_username = "clirunnerregistry"
+        acr_password = "1zzlku2RHy5s3X1Do82HYThS7MM6DMgeLMke33qopk+ACRANFJhc"  # Consider using os.environ for secrets
 
-        # full_image_tag = push_image_to_acr(image, acr_server, "cli-runner")
+        full_image_tag = push_image_to_acr(image, acr_server, "cli-runner")
 
-        # # === STEP 5: Deploy to Azure
-        # container_name = f"cli-runner-deploy-{unique_id}"
-        # dns_label = f"clirunnerdemo{unique_id}"
-        # deploy_to_azure_from_acr(
-        #     full_image_tag,
-        #     resource_group="HackathonRG",
-        #     container_name=container_name,
-        #     acr_server=acr_server,
-        #     acr_username=acr_username,
-        #     acr_password=acr_password,
-        #     dns_label=dns_label,
-        #     port=8080
-        # )
+        # === STEP 5: Deploy to Azure
+        container_name = f"cli-runner-deploy-{unique_id}"
+        dns_label = f"clirunnerdemo{unique_id}"
+        deploy_to_azure_from_acr(
+            full_image_tag,
+            resource_group="HackathonRG",
+            container_name=container_name,
+            acr_server=acr_server,
+            acr_username=acr_username,
+            acr_password=acr_password,
+            dns_label=dns_label,
+            port=8080
+        )
 
-        # # === STEP 6: Wait a few seconds and return the public IP
-        # public_ip = f"http://{dns_label}.eastus.azurecontainer.io:8080"
+        # === STEP 6: Wait a few seconds and return the public IP
+        public_ip = f"http://{dns_label}.eastus.azurecontainer.io:8080"
 
-        # # === STEP 7: Return the generated shell script and terminal URL
-        # with open(os.path.join(path, "install_deps.sh")) as f:
-        #     shell_script = f.read()
+        # === STEP 7: Return the generated shell script and terminal URL
+        with open(os.path.join(path, "install_deps.sh")) as f:
+            shell_script = f.read()
 
-        # return jsonify({
-        #     "status": "success",
-        #     "shell_script": shell_script,
-        #     "dependencies": {},  # Add dependency JSON here if needed
-        #     "ttyd_url": public_ip
-        # })
+        return jsonify({
+            "status": "success",
+            "shell_script": shell_script,
+            "dependencies": {},  # Add dependency JSON here if needed
+            "ttyd_url": public_ip
+        })
         return jsonify({"status": "success"})
 
     except Exception as e:
