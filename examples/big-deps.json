@@ -1,0 +1,87 @@
+{
+  "base_image": "ubuntu:22.04",
+  "system_packages": [
+    "build-essential",
+    "curl"
+  ],
+  "languages": [
+    {
+      "name": "python",
+      "version": "3.9",
+      "packages": [
+        "requests==2.25.1",
+        "flask==2.0.1",
+        "numpy==1.21.0",
+        "pandas==1.3.0"
+      ]
+    },
+    {
+      "name": "node",
+      "version": "16.x",
+      "packages": [
+        "express",
+        "axios",
+        "lodash",
+        "react"
+      ]
+    },
+    {
+      "name": "ruby",
+      "version": "2.7",
+      "packages": [
+        "rails",
+        "sinatra",
+        "rake"
+      ]
+    },
+    {
+      "name": "java",
+      "version": "11",
+      "packages": [
+        "spring-boot",
+        "hibernate",
+        "junit",
+        "log4j"
+      ]
+    },
+    {
+      "name": "c",
+      "version": "latest",
+      "packages": [
+        "libc6-dev",
+        "libssl-dev",
+        "build-essential"
+      ]
+    },
+    {
+      "name": "cpp",
+      "version": "latest",
+      "packages": [
+        "libstdc++-8-dev",
+        "libboost-all-dev",
+        "g++",
+        "cmake"
+      ]
+    },
+    {
+      "name": "rust",
+      "version": "1.55",
+      "packages": [
+        "tokio",
+        "serde",
+        "actix-web",
+        "rocket"
+      ]
+    },
+    {
+      "name": "go",
+      "version": "1.16",
+      "packages": [
+        "gorilla/mux",
+        "gin-gonic/gin",
+        "golang/x/tools",
+        "protobuf"
+      ]
+    }
+  ]
+}

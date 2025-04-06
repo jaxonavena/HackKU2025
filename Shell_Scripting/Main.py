@@ -4,8 +4,8 @@ import os
 
 
 ## Add code for receiveing json file and replace this hard coded input
-def main():
-    file = "../examples/dependency.json"
+def script_gen():
+    file = "../examples/big-deps.json"
 
     jimbo = Parser(file)
 
