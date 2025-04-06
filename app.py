@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import sys
 import os
+import traceback
 
 # Add the current directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -24,6 +25,15 @@ from Shell_Scripting.Main import main as generate_shell_script
 
 app = Flask(__name__)
 CORS(app)
+
+# Configure Flask to ignore the repo directory for reloading
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+extra_files = []
+for root, dirs, files in os.walk("."):
+    if "dependency-parser/repo" in root:
+        continue
+    for filename in files:
+        extra_files.append(os.path.join(root, filename))
 
 @app.route('/')
 def home():
@@ -56,4 +66,4 @@ def run():
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001, extra_files=extra_files)
