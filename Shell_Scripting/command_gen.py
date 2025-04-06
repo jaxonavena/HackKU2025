@@ -22,7 +22,7 @@ class CommandGen:
   }
     
   def setup(self):
-    with open("setup.sh", "w") as script:
+    with open("./DockerBuilder/setup.sh", "w") as script:
       script.write("#!/bin/bash\n")
       script.write("echo 'Setting up your environment...'\n")
       script.write("sudo apt-get update\n")
@@ -39,7 +39,7 @@ class CommandGen:
     version = dep.get("version")
     packs = dep.get("packages")
 
-    with open("setup.sh", "a") as script:
+    with open("./DockerBuilder/setup.sh", "a") as script:
       if system_packages:
         for item in system_packages:
           script.write(f"sudo apt-get install -y {item}\n")
@@ -57,4 +57,12 @@ class CommandGen:
           command += f" {pack}"
         command += "\n"
         script.write(command)
+
+# FROM python:3.10-slim
+# WORKDIR /app
+# COPY repo/ /app/
+# COPY setup.sh /app/setup.sh
+# RUN chmod +x /app/setup.sh && /app/setup.sh
+# EXPOSE 8080
+# CMD ["ttyd", "--writable", "-p", "8080", "bash"]
 

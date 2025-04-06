@@ -23,5 +23,4 @@ def clean_up():
         print(f"{file_path} not found.")
 
 if __name__ == "__main__":
-    # main()
     script_gen()
