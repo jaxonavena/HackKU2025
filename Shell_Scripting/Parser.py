@@ -14,12 +14,13 @@ class Parser:
         script_builder.setup()
 
         for HighLevelkey, HighLevelvalue in data.items():
-            if HighLevelkey ==  "system_packages":
+
+            if HighLevelkey == "system_packages":
                     system_data = {
                         "system_packages": HighLevelvalue,
                     }
                     script_builder.generate(system_data)
-            else:
+            elif HighLevelkey == "languages":
                     for item in HighLevelvalue:
                         script_builder.generate(item)
 

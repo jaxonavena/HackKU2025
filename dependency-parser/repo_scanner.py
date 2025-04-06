@@ -31,9 +31,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) # dependency-parser
 
 def get_repo_path():
-    """Get a unique temporary directory for cloning repositories"""
-    temp_dir = tempfile.mkdtemp(prefix='repo_', dir=os.path.join(SCRIPT_DIR, "repo"))
-    return temp_dir
+    # """Get a unique temporary directory for cloning repositories"""
+    # temp_dir = tempfile.mkdtemp(prefix='repo_', dir=os.path.join(SCRIPT_DIR, "repo"))
+    # return temp_dir
+    repo_dir = os.path.join(SCRIPT_DIR, "repo", "target")
+    os.makedirs(repo_dir, exist_ok=True)
+    return repo_dir
 
 def clone_repo(git_url):
     """Clone a GitHub repository to a temporary directory."""
@@ -58,10 +61,13 @@ def clone_repo(git_url):
         raise Exception(f"Failed to clone repository: {str(e)}")
 
 def cleanup_repo(repo_path):
+    print("\n\n\n CLEANING \n\n\n")
     """Clean up the temporary repository directory"""
     try:
-        if os.path.exists(repo_path):
-            shutil.rmtree(repo_path)
+      if os.path.exists(repo_path):
+          print("\n\n\n EXISTS \n\n\n")
+
+          shutil.rmtree(repo_path)
     except Exception as e:
         logging.warning(f"Failed to clean up repository directory: {e}")
 
@@ -103,9 +109,7 @@ def main(github_repo_url):
 
     repo_path = None
     try:
-        # Clean up the temporary repository
-        if repo_path:
-            cleanup_repo(repo_path)
+        cleanup_repo(f"{SCRIPT_DIR}/repo")
 
         # Create repo directory if it doesn't exist
         os.makedirs(os.path.join(SCRIPT_DIR, "repo"), exist_ok=True)
