@@ -8,6 +8,28 @@ from DockerBuilder.imageBuilder import generate_dockerfile, build_docker_image
 from DockerBuilder.deploymentManger import push_image_to_acr, deploy_to_azure_from_acr
 import uuid
 import time
+# Import using importlib to handle the hyphenated directory name
+import importlib.util
+import importlib.machinery
+
+# Get the path to the parent directory (your_project/)
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+
+from Shell_Scripting.Main import script_gen
+
+# # Add the current directory to Python path
+# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Load the repo_scanner module
+loader = importlib.machinery.SourceFileLoader(
+    'repo_scanner',
+    os.path.join(os.path.dirname(__file__), 'dependency-parser', 'repo_scanner.py')
+)
+spec = importlib.util.spec_from_loader('repo_scanner', loader)
+repo_scanner = importlib.util.module_from_spec(spec)
+loader.exec_module(repo_scanner)
+
 app = Flask(__name__)
 CORS(app)  # This must also come after app is defined
 
@@ -22,6 +44,10 @@ def run():
     print(f"Received repo URL: {repo_url}")
 
     try:
+        # Run repo scanner to get dependencies JSON
+        repo_scanner.main(repo_url)
+        # script_gen()
+        return jsonify({"status": "success"})
         # 1. Analyze and generate install_deps.sh
         scan_repo(repo_url)
         script_gen()
