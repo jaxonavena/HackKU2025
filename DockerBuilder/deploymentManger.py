@@ -96,7 +96,7 @@ def deploy_to_azure_from_acr(image_tag, resource_group, container_name, acr_serv
     ]
 
     if port:
-        cmd += ["--ports", "8080", "--ip-address", "Public"]
+        cmd += ["--ports", "8080", "--ports", "5000", "--ip-address", "Public"]
 
     if dns_label:
         cmd += ["--dns-name-label", dns_label]

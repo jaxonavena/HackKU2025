@@ -11,6 +11,7 @@ def generate_dockerfile(shell_scripting_path: str):
         f.write("COPY install_deps.sh /app/install_deps.sh\n")
         f.write("RUN chmod +x /app/install_deps.sh && /app/install_deps.sh\n")
         f.write("EXPOSE 8080\n") 
+        f.write("EXPOSE 5000\n")
         f.write("""CMD ["ttyd", "--writable", "-p", "8080", "bash"]\n""")
     
     print(f"Dockerfile created at: {dockerfile_path}")
