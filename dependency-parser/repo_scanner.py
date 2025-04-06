@@ -144,7 +144,7 @@ def main(github_repo_url):
         manifest_file = "target.json"
 
         # Write manifest to JSON file (optional, for debugging)
-        with open(manifest_file, 'w') as f:
+        with open(f"./json/{manifest_file}", 'w') as f:
             json.dump(manifest, f, indent=2)
         logging.info(f"Dependency manifest written to {manifest_file}")
 
@@ -158,6 +158,7 @@ def main(github_repo_url):
         # Clean up the temporary repository
         if repo_path:
             cleanup_repo(repo_path)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
