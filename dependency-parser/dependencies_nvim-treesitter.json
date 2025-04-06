@@ -1,8 +1,0 @@
-{
-  "base_image": "ubuntu:22.04",
-  "system_packages": [
-    "build-essential",
-    "curl"
-  ],
-  "languages": []
-}
