@@ -26,6 +26,12 @@ class CommandGen:
       script.write("#!/bin/bash\n")
       script.write("echo 'Setting up your environment...'\n")
       script.write("sudo apt-get update\n")
+      script.write("apt-get install -y cmake g++ pkg-config libjson-c-dev libwebsockets-dev git make\n")
+      script.write("git clone https://github.com/tsl0922/ttyd.git /tmp/ttyd\n")
+      script.write("cd /tmp/ttyd\n")
+      script.write("mkdir build && cd build\n")
+      script.write("cmake ..\n")
+      script.write("make && make install\n")
 
   def generate(self, dep):
     system_packages = dep.get("system_packages")
